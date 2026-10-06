@@ -191,3 +191,22 @@ body{padding-left:var(--sidebar-width)}
 .cell-live{height:100vh}
 @media(min-width:1051px){.cell-live{min-height:984px!important}.topbar.veemo-sidebar+main{margin-top:0!important}}
 @media(max-width:680px){:root{--sidebar-width:54px}.topbar.veemo-sidebar{width:54px!important;min-height:500px!important;grid-template-rows:58px minmax(0,1fr) auto!important}.topbar.veemo-sidebar .brand{width:54px!important;height:58px!important}.topbar.veemo-sidebar .brand-logo{width:42px!important;height:42px!important}.topbar.veemo-sidebar .brand-logo img{width:76px!important;height:76px!important}.topbar.veemo-sidebar nav a,.topbar.veemo-sidebar .header-actions>a,.topbar.veemo-sidebar .header-actions>button{width:54px!important;min-width:54px!important;height:47px!important}.topbar.veemo-sidebar nav a svg,.topbar.veemo-sidebar .header-actions svg{width:18px;height:18px}.topbar.veemo-sidebar .header-actions{width:54px!important}.topbar.veemo-sidebar .header-actions .ca{width:54px!important;height:28px!important}.topbar.veemo-sidebar nav a[title]::before,.topbar.veemo-sidebar .header-actions>[title]::before{display:none}}
+
+/* Sidebar hover expansion. */
+@media(min-width:681px){
+  .topbar.veemo-sidebar{transition:width .2s ease,box-shadow .2s ease}
+  .topbar.veemo-sidebar:hover,.topbar.veemo-sidebar:focus-within{width:218px!important;box-shadow:20px 0 55px rgba(0,0,0,.72)!important}
+  .topbar.veemo-sidebar .brand,.topbar.veemo-sidebar nav a,.topbar.veemo-sidebar .header-actions,.topbar.veemo-sidebar .header-actions>a,.topbar.veemo-sidebar .header-actions>button,.topbar.veemo-sidebar .header-actions .ca{transition:width .2s ease}
+  .topbar.veemo-sidebar:hover .brand,.topbar.veemo-sidebar:focus-within .brand{width:218px!important;grid-template-columns:64px 1fr!important;justify-items:start!important}
+  .topbar.veemo-sidebar:hover .brand-logo,.topbar.veemo-sidebar:focus-within .brand-logo{margin-left:8px}
+  .topbar.veemo-sidebar:hover .brand>span:last-child,.topbar.veemo-sidebar:focus-within .brand>span:last-child{display:block!important;color:#fff3ed;font:600 13px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+  .topbar.veemo-sidebar:hover nav a,.topbar.veemo-sidebar:focus-within nav a,.topbar.veemo-sidebar:hover .header-actions>a,.topbar.veemo-sidebar:focus-within .header-actions>a,.topbar.veemo-sidebar:hover .header-actions>button,.topbar.veemo-sidebar:focus-within .header-actions>button{width:218px!important;justify-content:flex-start!important;gap:17px!important;padding:0 20px!important}
+  .topbar.veemo-sidebar:hover nav a span,.topbar.veemo-sidebar:focus-within nav a span{display:block!important;color:inherit;font:600 10px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+  .topbar.veemo-sidebar:hover .header-actions,.topbar.veemo-sidebar:focus-within .header-actions{width:218px!important}
+  .topbar.veemo-sidebar:hover .header-actions .ca,.topbar.veemo-sidebar:focus-within .header-actions .ca{width:218px!important;justify-content:flex-start!important;padding:0 20px!important;font-size:8px!important}
+  .topbar.veemo-sidebar:hover .header-actions .ca::after,.topbar.veemo-sidebar:focus-within .header-actions .ca::after{content:" / CONTRACT ADDRESS";margin-left:7px;color:#80685d}
+  .topbar.veemo-sidebar:hover .header-actions .social-x::after,.topbar.veemo-sidebar:focus-within .header-actions .social-x::after{content:"X / TWITTER";font:600 9px var(--mono);letter-spacing:.08em}
+  .topbar.veemo-sidebar:hover .header-actions button::after,.topbar.veemo-sidebar:focus-within .header-actions button::after{content:"CONNECT WALLET";font:600 9px var(--mono);letter-spacing:.08em}
+  .topbar.veemo-sidebar:hover .header-actions .buy-cell::after,.topbar.veemo-sidebar:focus-within .header-actions .buy-cell::after{content:"PUMP.FUN";font:700 9px var(--mono);letter-spacing:.08em}
+  .topbar.veemo-sidebar:hover nav a[title]::before,.topbar.veemo-sidebar:focus-within nav a[title]::before,.topbar.veemo-sidebar:hover .header-actions>[title]::before,.topbar.veemo-sidebar:focus-within .header-actions>[title]::before{display:none!important}
+}
