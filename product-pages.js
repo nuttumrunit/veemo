@@ -56,6 +56,7 @@
   }
 
   function renderLiveTelemetry(state, telemetry, channels) {
+    if(window.VEEMO_PAGE_LIVE)return;
     const live=channels.filter(channel=>!channel.error),online=(state.machines||[]).filter(machine=>machine.status!=='offline'),stars=channels.reduce((sum,channel)=>sum+(Number(channel.stars)||0),0),forks=channels.reduce((sum,channel)=>sum+(Number(channel.forks)||0),0),issues=channels.reduce((sum,channel)=>sum+(Number(channel.issues)||0),0),newest=channels.filter(channel=>channel.commitAt).sort((a,b)=>Date.parse(b.commitAt)-Date.parse(a.commitAt))[0];
     const inline=$('.cell-inline-stats');
     if(inline){const heroItems=[['AGENTS',`${online.length}/${state.machines.length} ONLINE`],['SOURCES',`${live.length}/${channels.length} READABLE`],['GITHUB STARS',compact(stars)],['FORKS',compact(forks)],['OPEN ISSUES',compact(issues)],['CORE REQUESTS',compact(telemetry.requests)],['MEMORY',`${telemetry.rssMb} MB RSS`],['GENERATION',String(state.lineage.length)],['LATEST COMMIT',newest?`${newest.repo} · ${short(newest.sha)} · ${etTime(newest.commitAt)} ET`:'WAITING FOR GITHUB']];const markup=heroItems.map(([label,value])=>`<span><b>${esc(label)}</b><em>${esc(value)}</em></span>`).join('');inline.classList.add('hero-data-tape');inline.style.setProperty('--hero-phase',`-${(Date.now()/1000%56).toFixed(2)}s`);inline.innerHTML=`<div class="hero-live-track">${markup}${markup}</div>`;}

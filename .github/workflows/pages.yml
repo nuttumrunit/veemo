@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
 
 permissions:
   contents: read
@@ -22,6 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Capture live public pages
+        continue-on-error: true
+        run: node tools/capture-live-pages.mjs
       - uses: actions/configure-pages@v5
         with:
           enablement: true

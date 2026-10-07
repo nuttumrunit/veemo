@@ -1,4 +1,6 @@
+(function(){window.VEEMO_PAGE_LIVE=true;document.body.classList.add('github-live-mounted');const h=document.head,l=document.createElement('link');l.rel='stylesheet';l.href='./page-stream-live.css?v=2';h.append(l);for(const file of ['assets/live-pages/manifest.js','page-stream-live.js']){const s=document.createElement('script');s.src='./'+file+'?v=2';s.async=false;h.append(s)}})();
 (function(){
+  if(window.VEEMO_PAGE_LIVE)return;
   const stage=document.querySelector('.screen-stage'),screen=document.querySelector('.cell-screen');
   if(!stage||!screen)return;
   document.body.classList.add('github-live-mounted');
