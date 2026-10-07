@@ -5,4 +5,3 @@ data/state.json.tmp
 agents/*/.cellumo-worker.json
 agents/*/agent.log
 agents/pids.json
-node_modules/

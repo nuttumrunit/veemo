@@ -4,8 +4,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-  schedule:
-    - cron: '*/5 * * * *'
 
 permissions:
   contents: read
@@ -24,11 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install browser controller
-        run: npm ci --ignore-scripts
-      - name: Capture live public pages
-        continue-on-error: true
-        run: node tools/capture-live-pages.mjs
       - uses: actions/configure-pages@v5
         with:
           enablement: true
