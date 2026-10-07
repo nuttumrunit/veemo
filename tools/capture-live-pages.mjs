@@ -23,18 +23,18 @@ const executablePath=process.env.CHROME_BIN||(process.platform==='win32'?'C:\\Pr
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 
 async function inspect(page,step,agent){
- return page.evaluate((step,agent)=>{
+ return page.evaluate(async(step,agent)=>{
   document.getElementById('__veemo_agent_overlay__')?.remove();
   const nodes=[...document.querySelectorAll('a,button,h1,h2,h3,pre,code,[role="row"],table tr,li')].filter(el=>{const r=el.getBoundingClientRect(),s=getComputedStyle(el);return r.width>70&&r.height>12&&s.display!=='none'&&s.visibility!=='hidden'});
   if(!nodes.length)return {action:'READ PAGE',target:document.title||location.hostname,tag:'PAGE'};
   const pick=nodes[Math.min(nodes.length-1,Math.floor((nodes.length-1)*step/3))],tag=pick.tagName,before=pick.getBoundingClientRect();
-  scrollTo({top:Math.max(0,scrollY+before.top-innerHeight*.42),left:Math.max(0,scrollX+before.left-innerWidth*.18),behavior:'instant'});
-  if(nodes.length===1&&(tag==='PRE'||tag==='CODE'))scrollTo(0,Math.max(0,(document.documentElement.scrollHeight-innerHeight)*step/3));
+  const targetTop=nodes.length===1&&(tag==='PRE'||tag==='CODE')?Math.max(0,(document.documentElement.scrollHeight-innerHeight)*step/3):Math.max(0,scrollY+before.top-innerHeight*.42);
+  const targetLeft=Math.max(0,scrollX+before.left-innerWidth*.18);scrollTo({top:targetTop,left:targetLeft,behavior:'smooth'});await new Promise(resolve=>setTimeout(resolve,2600));
   const r=pick.getBoundingClientRect(),action=tag==='A'?'FOLLOW LINK':tag==='BUTTON'?'CHECK CONTROL':/H[1-3]/.test(tag)?'READ HEADING':tag==='CODE'||tag==='PRE'?'INSPECT RESPONSE':tag==='TR'||pick.getAttribute('role')==='row'?'INSPECT RECORD':'READ ITEM';
   const raw=(pick.innerText||pick.textContent||pick.getAttribute('aria-label')||tag).replace(/\s+/g,' ').trim(),start=Math.floor(raw.length*step/4),text=raw.slice(start,start+72)||raw.slice(0,72);
   const left=Math.max(3,Math.min(innerWidth-44,r.left-3)),top=Math.max(24,Math.min(innerHeight-44,r.top-3)),width=Math.max(40,Math.min(innerWidth-left-4,r.width+6)),height=Math.max(20,Math.min(innerHeight-top-4,r.height+6));
-  const box=document.createElement('div');box.id='__veemo_agent_overlay__';box.style.cssText='position:fixed;z-index:2147483647;pointer-events:none;left:'+left+'px;top:'+top+'px;width:'+width+'px;height:'+height+'px;border:2px solid #ff8757;background:rgba(255,135,87,.08);box-shadow:0 0 0 1px #160804';
-  const label=document.createElement('span');label.textContent=agent+' / '+action+' / '+text;label.style.cssText='position:absolute;left:-2px;top:-24px;max-width:520px;padding:5px 7px;background:#ff8757;color:#160804;font:600 10px monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';box.append(label);document.documentElement.append(box);
+  const box=document.createElement('div');box.id='__veemo_agent_overlay__';box.style.cssText='position:fixed;z-index:2147483647;pointer-events:none;left:'+left+'px;top:'+top+'px;width:'+width+'px;height:'+height+'px;border:5px solid #ff6f3c;background:rgba(255,111,60,.15);box-shadow:0 0 0 2px #160804,0 0 22px rgba(255,111,60,.85)';
+  const label=document.createElement('span');label.textContent=agent+' / '+action+' / '+text;label.style.cssText='position:absolute;left:-5px;top:-42px;max-width:760px;padding:8px 12px;background:#ff6f3c;color:#120603;border:2px solid #160804;font:800 20px monospace;line-height:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:4px 4px 0 #160804';box.append(label);document.documentElement.append(box);
   return {action,target:text,tag,scrollY:Math.round(scrollY),selector:tag.toLowerCase()}
  },step,agent)
 }
@@ -46,7 +46,7 @@ async function run(target){
   const page=await browser.newPage();await page.setViewport({width:1280,height:800,deviceScaleFactor:1});
   await page.goto(target.url,{waitUntil:'domcontentloaded',timeout:45000});await sleep(5000);
   const frames=[],observations=[];
-  for(let step=0;step<4;step++){const observation=await inspect(page,step,target.agent);observations.push(observation);await sleep(550);const name=target.id+'-frame-'+step+'.jpg';await page.screenshot({path:path.join(output,name),type:'jpeg',quality:76,captureBeyondViewport:false});frames.push('assets/live-pages/'+name)}
+  for(let step=0;step<4;step++){const start=frames.length,trace=inspect(page,step,target.agent);for(let motion=0;motion<4;motion++){await sleep(500);const name=target.id+'-frame-'+frames.length+'.jpg';await page.screenshot({path:path.join(output,name),type:'jpeg',quality:68,captureBeyondViewport:false});frames.push('assets/live-pages/'+name)}const observation=await trace,name=target.id+'-frame-'+frames.length+'.jpg';await page.screenshot({path:path.join(output,name),type:'jpeg',quality:72,captureBeyondViewport:false});frames.push('assets/live-pages/'+name);for(let index=start;index<frames.length-1;index++)observations[index]={action:'SCROLL TO '+observation.tag,target:observation.target,tag:observation.tag,scrollY:observation.scrollY};observations.push(observation)}
   return {...target,ok:true,image:frames[0],frames,observations}
  }catch(error){console.error('capture failed:',target.id,error.message);return {...target,ok:false,error:error.message,image:'assets/live-pages/'+target.id+'.png',frames:[],observations:[]}}
  finally{if(browser)await browser.close().catch(()=>{});try{fs.rmSync(profile,{recursive:true,force:true})}catch{}}
