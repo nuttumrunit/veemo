@@ -1,0 +1,10 @@
+{
+  "build": "0184",
+  "generatedAt": "2026-10-07T11:20:00.867Z",
+  "assets": [
+    {
+      "path": "artifacts/veemo_core.glb",
+      "sha256": "15ee1a085b8327a7faf9fe8309ebb1e304dae84b999ec6e326d1a5d6be2e97e4"
+    }
+  ]
+}

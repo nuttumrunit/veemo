@@ -5,3 +5,7 @@ data/state.json.tmp
 agents/*/.cellumo-worker.json
 agents/*/agent.log
 agents/pids.json
+foundry-unity/Library/
+foundry-unity/Logs/
+foundry-unity/Temp/
+foundry-unity/UserSettings/
