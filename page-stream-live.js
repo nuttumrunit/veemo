@@ -25,7 +25,7 @@
   }
   function frame(s){
     var status=s.ok?'REAL PAGE / LIVE':'PAGE UNAVAILABLE';
-    return '<div class="gh-native-live cross-live"><div class="gh-native-browser"><span class="browser-lights"><i></i><i></i><i></i></span><b>'+esc(s.system)+'</b><code>'+esc(short(s.url))+'</code><a href="'+esc(s.url)+'" target="_blank" rel="noopener">OPEN PAGE</a><em>'+status+'</em></div><nav class="gh-agent-channels" aria-label="Live public-page agents"></nav><section class="gh-native-page"><a class="stream-page" href="'+esc(s.url)+'" target="_blank" rel="noopener"><img src="'+esc(img(s))+'" alt="Real page: '+esc(s.title)+'"><span class="stream-page-status">'+status+' / '+esc(time())+'</span></a></section><div class="gh-native-log"><header><b>LIVE PAGE TRACE</b><span>'+esc(s.agent)+'</span><em>REAL PUBLIC SOURCE</em></header><div><p><time>'+esc(time())+'</time><b>OPEN</b><span>'+esc(short(s.url))+'</span><strong>'+(s.ok?'200':'ERR')+'</strong></p><p><time>+00:00</time><b>AGENT</b><span>'+esc(s.agent)+' is observing '+esc(s.title)+'</span><strong>READ</strong></p></div></div></div>'
+    return '<div class="gh-native-live cross-live" style="--stream-delay:-'+(state.index*1.7)+'s"><div class="gh-native-browser"><span class="browser-lights"><i></i><i></i><i></i></span><b>'+esc(s.system)+'</b><code>'+esc(short(s.url))+'</code><a href="'+esc(s.url)+'" target="_blank" rel="noopener">OPEN PAGE</a><em>'+status+'</em></div><nav class="gh-agent-channels" aria-label="Live public-page agents"></nav><section class="gh-native-page"><a class="stream-page" href="'+esc(s.url)+'" target="_blank" rel="noopener"><img src="'+esc(img(s))+'" alt="Real page: '+esc(s.title)+'"><span class="stream-page-status">'+status+' / AGENT SCROLLING</span></a></section><div class="gh-native-log"><header><b>LIVE PAGE TRACE</b><span>'+esc(s.agent)+'</span><em>REAL PUBLIC SOURCE</em></header><div><p><time>'+esc(time())+'</time><b>OPEN</b><span>'+esc(short(s.url))+'</span><strong>'+(s.ok?'200':'ERR')+'</strong></p><p><time>LIVE</time><b>AGENT</b><span>'+esc(s.agent)+' is scrolling '+esc(s.title)+'</span><strong>READ</strong></p></div></div></div>'
   }
   function telemetry(active){
     var good=streams.filter(function(s){return s.ok}).length,systems=new Set(streams.map(function(s){return s.system})).size;
@@ -39,16 +39,31 @@
     var nav=stage.querySelector('.gh-agent-channels');streams.forEach(function(item,i){var b=document.createElement('button');b.className='gh-agent-channel'+(i===state.index?' active':'');b.innerHTML='<span>'+String(i+1).padStart(2,'0')+'</span><b>'+esc(item.system)+'</b><i>'+esc(item.agent)+'</i>';b.onclick=function(){main(i,true)};nav.append(b)});
     var h=screen.querySelector(':scope > header');if(h)h.innerHTML='<span><i></i><b>'+esc(s.agent)+'</b>&nbsp; '+String(state.index+1).padStart(2,'0')+'/'+String(streams.length).padStart(2,'0')+'&nbsp; / &nbsp;'+esc(s.system)+'</span><em>REAL PAGE LIVE</em>';
     var f=screen.querySelector(':scope > footer');if(f)f.innerHTML='<span>'+esc(s.system)+'</span><i>/</i><b>'+esc(s.title)+'</b><em>'+(s.ok?'CAPTURE OK':'UNAVAILABLE')+'</em>';
-    document.querySelectorAll('[data-page-source]').forEach(function(n){n.textContent=short(s.url)});telemetry(s);if(manual)state.manualUntil=Date.now()+12000
+    attachMarker(stage.querySelector('.stream-page'),state.index);document.querySelectorAll('[data-page-source]').forEach(function(n){n.textContent=short(s.url)});telemetry(s);if(manual)state.manualUntil=Date.now()+12000
   }
   function renderWall(){
     if(!wall)return;wall.className='machine-wall repo-live-wall twelve github-synced-wall cross-agent-wall';wall.innerHTML='';
-    streams.forEach(function(s,i){var tile=document.createElement('article');tile.className='repo-live-tile';tile.dataset.ok=String(!!s.ok);tile.tabIndex=0;tile.innerHTML='<header><span><i></i>'+String(i+1).padStart(2,'0')+' / '+esc(s.agent)+'</span><b>'+(s.ok?'LIVE':'ERROR')+'</b></header><div class="repo-live-viewport"><div class="repo-mini-browser">'+esc(short(s.url))+'</div><a class="stream-tile-image" href="'+esc(s.url)+'" target="_blank" rel="noopener"><img src="'+esc(img(s))+'" alt="Real page: '+esc(s.title)+'"></a></div><footer><span>'+esc(s.system)+'</span><b>'+esc(s.title)+'</b><em>open page</em></footer>';
-      function select(e){if(e&&e.target.closest('a'))return;main(i,true);route('live')}tile.onclick=select;tile.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();select(e)}};wall.append(tile)
+    streams.forEach(function(s,i){var tile=document.createElement('article');tile.className='repo-live-tile';tile.dataset.ok=String(!!s.ok);tile.tabIndex=0;tile.style.setProperty('--stream-delay',(-i*1.35)+'s');tile.style.setProperty('--stream-speed',(15+(i%5)*2)+'s');tile.innerHTML='<header><span><i></i>'+String(i+1).padStart(2,'0')+' / '+esc(s.agent)+'</span><b>'+(s.ok?'LIVE':'ERROR')+'</b></header><div class="repo-live-viewport"><div class="repo-mini-browser">'+esc(short(s.url))+'</div><a class="stream-tile-image" href="'+esc(s.url)+'" target="_blank" rel="noopener"><img src="'+esc(img(s))+'" alt="Real page: '+esc(s.title)+'"></a></div><footer><span>'+esc(s.system)+'</span><b>'+esc(s.title)+'</b><em>scrolling</em></footer>';
+      attachMarker(tile.querySelector('.stream-tile-image'),i);function select(e){if(e&&e.target.closest('a'))return;main(i,true);route('live')}tile.onclick=select;tile.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();select(e)}};wall.append(tile)
     });
     var command=document.querySelector('.machine-command');if(command){var title=command.querySelector('b'),summary=command.querySelector('em'),buttons=command.querySelectorAll('nav button');if(title)title.textContent='agents watch --apis --chain --live';if(summary)summary.textContent='# 12 agents / real public pages';var labels=['[p]ages','[t]races','[a]gents 12','[c]hain 3','[a]pis 6','[l]ive 12','[e]rrors '+streams.filter(function(s){return !s.ok}).length];buttons.forEach(function(b,i){if(labels[i])b.textContent=labels[i]})}
     var status=document.querySelector('.machine-wall-status > span');if(status)status.innerHTML='<b>veemo</b> "real pages / public APIs / Solana"'
   }
-  copy();renderWall();main(0,false);
+  function actions(s){
+    if(/GITHUB/.test(s.system))return ['LOCATE COMMIT','READ RELEASE','INSPECT ACTION','TRACE SOURCE'];
+    if(/NPM|PYPI/.test(s.system))return ['READ METADATA','CHECK VERSION','LOCATE PACKAGE','TRACE REPOSITORY'];
+    if(/SOLANA/.test(s.system))return ['READ ACCOUNT','CHECK PROGRAM','TRACE HISTORY','VERIFY ADDRESS'];
+    if(/DEX/.test(s.system))return ['READ RESPONSE','FIND SOL PAIR','TRACE FIELD','VERIFY SOURCE'];
+    return ['OPEN SOURCE','FOLLOW EVENT','CHECK PACKAGE','VERIFY ON CHAIN']
+  }
+  function attachMarker(host,index){
+    if(!host)return;var marker=document.createElement('span');marker.className='agent-work-marker';marker.dataset.streamIndex=index;marker.innerHTML='<i class="agent-target"><b>LOCATING</b><em>PUBLIC PAGE</em></i><i class="agent-link"></i><strong class="agent-page-cursor"><i></i>'+esc(streams[index].agent)+'</strong>';host.append(marker)
+  }
+  var workStep=0,positions=[[8,14],[56,18],[18,55],[61,61],[35,35]];
+  function work(){
+    workStep++;document.querySelectorAll('.agent-work-marker').forEach(function(marker,order){var index=Number(marker.dataset.streamIndex)||0,s=streams[index],phase=(workStep+order)%positions.length,pos=positions[phase],list=actions(s),label=list[phase%list.length];marker.style.setProperty('--work-x',pos[0]+'%');marker.style.setProperty('--work-y',pos[1]+'%');marker.classList.toggle('is-locking',phase%2===0);marker.querySelector('.agent-target b').textContent=label;marker.querySelector('.agent-target em').textContent=['SCANNING','READING','FOLLOWING','VERIFYING'][phase%4];var tile=marker.closest('.repo-live-tile');if(tile){var status=tile.querySelector('footer em');if(status)status.textContent=label.toLowerCase()}});
+    var active=streams[state.index],log=stage&&stage.querySelector('.gh-native-log div p:last-child span');if(log)log.textContent=active.agent+' / '+actions(active)[workStep%actions(active).length].toLowerCase()+' / '+short(active.url)
+  }
+  copy();renderWall();main(0,false);work();setInterval(work,1800);
   setInterval(function(){if(Date.now()<state.manualUntil)return;main((state.index+1)%streams.length,false);var p=stage&&stage.querySelector('.stream-page');if(p){p.classList.add('stream-hop');setTimeout(function(){p.classList.remove('stream-hop')},400)}},7000)
 }());
