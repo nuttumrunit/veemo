@@ -8,7 +8,7 @@ const targets=[
  {id:'npm-web3',agent:'npm-sentinel',system:'NPM REGISTRY',title:'@solana/web3.js latest JSON',url:'https://registry.npmjs.org/@solana/web3.js/latest'},
  {id:'solscan-wallet',agent:'wallet-observer',system:'SOLANA MAINNET RPC',title:'Veemo treasury account state',url:'https://api.mainnet-beta.solana.com',rpc:{address:'BMWnpwFDM5q8zCz4vaAvSj55JWxNhTPaG8ooNdAyTPJM',calls:[['getBalance',['BMWnpwFDM5q8zCz4vaAvSj55JWxNhTPaG8ooNdAyTPJM',{commitment:'confirmed'}]],['getSignaturesForAddress',['BMWnpwFDM5q8zCz4vaAvSj55JWxNhTPaG8ooNdAyTPJM',{limit:8}]]]}},
  {id:'dex-solana',agent:'market-pulse',system:'DEXSCREENER API',title:'SOL live pair response',url:'https://api.dexscreener.com/latest/dex/search?q=SOL'},
- {id:'pypi-solana',agent:'pypi-sentinel',system:'PYPI',title:'solana Python package',url:'https://pypi.org/project/solana/'},
+ {id:'pypi-solana',agent:'pypi-sentinel',system:'PYPI API',title:'solana package metadata',url:'https://pypi.org/pypi/solana/json'},
  {id:'status-solana',agent:'network-health',system:'SOLANA STATUS',title:'Solana network status',url:'https://status.solana.com/'},
  {id:'github-actions',agent:'build-watch',system:'GITHUB ACTIONS',title:'Agave build actions',url:'https://github.com/anza-xyz/agave/actions'},
  {id:'go-solana',agent:'go-module-watch',system:'GO PACKAGES',title:'solana-go module',url:'https://pkg.go.dev/github.com/gagliardetto/solana-go'},
@@ -17,6 +17,70 @@ const targets=[
  {id:'solana-docs',agent:'protocol-reader',system:'SOLANA DOCS',title:'Solana account model',url:'https://solana.com/docs/core/accounts'},
  {id:'defi-solana',agent:'defi-linker',system:'DEFILLAMA API',title:'Solana protocol response',url:'https://api.llama.fi/protocol/solana'}
 ];
+const treasury='BMWnpwFDM5q8zCz4vaAvSj55JWxNhTPaG8ooNdAyTPJM',rpcUrl='https://api.mainnet-beta.solana.com';
+const rpcView=(address,calls)=>({url:rpcUrl,rpc:{address,calls}});
+const rotations={
+ 'github-code':[
+  {title:'Agave README source',url:'https://github.com/anza-xyz/agave/blob/master/README.md'},
+  {title:'Agave workspace manifest',url:'https://github.com/anza-xyz/agave/blob/master/Cargo.toml'},
+  {title:'Agave validator entrypoint',url:'https://github.com/anza-xyz/agave/blob/master/validator/src/main.rs'}
+ ],
+ 'npm-web3':[
+  {title:'@solana/web3.js latest JSON',url:'https://registry.npmjs.org/@solana/web3.js/latest'},
+  {title:'@solana/kit latest JSON',url:'https://registry.npmjs.org/@solana/kit/latest'},
+  {title:'Anchor latest JSON',url:'https://registry.npmjs.org/@coral-xyz/anchor/latest'}
+ ],
+ 'solscan-wallet':[
+  {title:'Treasury balance + recent signatures',...rpcView(treasury,[['getBalance',[treasury,{commitment:'confirmed'}]],['getSignaturesForAddress',[treasury,{limit:8}]]])},
+  {title:'Treasury account + token accounts',...rpcView(treasury,[['getAccountInfo',[treasury,{encoding:'jsonParsed',commitment:'confirmed'}]],['getTokenAccountsByOwner',[treasury,{programId:'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'},{encoding:'jsonParsed',commitment:'confirmed'}]]])},
+  {title:'Treasury signature verification',...rpcView(treasury,[['getSignaturesForAddress',[treasury,{limit:16}]],['getBalance',[treasury,{commitment:'finalized'}]]])}
+ ],
+ 'dex-solana':[
+  {title:'SOL live pair response',url:'https://api.dexscreener.com/latest/dex/search?q=SOL'},
+  {title:'JUP live pair response',url:'https://api.dexscreener.com/latest/dex/search?q=JUP'},
+  {title:'BONK live pair response',url:'https://api.dexscreener.com/latest/dex/search?q=BONK'}
+ ],
+ 'pypi-solana':[
+  {title:'solana package metadata',url:'https://pypi.org/pypi/solana/json'},
+  {title:'solders package metadata',url:'https://pypi.org/pypi/solders/json'},
+  {title:'anchorpy package metadata',url:'https://pypi.org/pypi/anchorpy/json'}
+ ],
+ 'status-solana':[
+  {title:'Solana network summary',url:'https://status.solana.com/api/v2/summary.json'},
+  {title:'Solana network components',url:'https://status.solana.com/api/v2/components.json'},
+  {title:'Solana unresolved incidents',url:'https://status.solana.com/api/v2/incidents/unresolved.json'}
+ ],
+ 'github-actions':[
+  {title:'Agave build actions',url:'https://github.com/anza-xyz/agave/actions'},
+  {title:'Solana program actions',url:'https://github.com/solana-program/token/actions'},
+  {title:'Solana web3.js actions',url:'https://github.com/solana-foundation/solana-web3.js/actions'}
+ ],
+ 'go-solana':[
+  {title:'solana-go module',url:'https://pkg.go.dev/github.com/gagliardetto/solana-go'},
+  {title:'solana-go RPC package',url:'https://pkg.go.dev/github.com/gagliardetto/solana-go/rpc'},
+  {title:'solana-go system program',url:'https://pkg.go.dev/github.com/gagliardetto/solana-go/programs/system'}
+ ],
+ 'explorer-program':[
+  {title:'System program state',...rpcView('11111111111111111111111111111111',[['getAccountInfo',['11111111111111111111111111111111',{encoding:'jsonParsed',commitment:'confirmed'}]],['getSignaturesForAddress',['11111111111111111111111111111111',{limit:8}]]])},
+  {title:'Token program state',...rpcView('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',[['getAccountInfo',['TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',{encoding:'jsonParsed',commitment:'confirmed'}]],['getSignaturesForAddress',['TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',{limit:8}]]])},
+  {title:'Compute budget program state',...rpcView('ComputeBudget111111111111111111111111111111',[['getAccountInfo',['ComputeBudget111111111111111111111111111111',{encoding:'jsonParsed',commitment:'confirmed'}]],['getSignaturesForAddress',['ComputeBudget111111111111111111111111111111',{limit:8}]]])}
+ ],
+ 'coingecko-solana':[
+  {title:'Solana asset response',url:'https://api.coingecko.com/api/v3/coins/solana'},
+  {title:'Jupiter asset response',url:'https://api.coingecko.com/api/v3/coins/jupiter-exchange-solana'}
+ ],
+ 'solana-docs':[
+  {title:'Solana account model',url:'https://solana.com/docs/core/accounts'},
+  {title:'Solana transaction model',url:'https://solana.com/docs/core/transactions'},
+  {title:'Solana fee model',url:'https://solana.com/docs/core/fees'}
+ ],
+ 'defi-solana':[
+  {title:'Solana protocol response',url:'https://api.llama.fi/protocol/solana'},
+  {title:'Jito protocol response',url:'https://api.llama.fi/protocol/jito'}
+ ]
+};
+const rotationRound=Number(process.env.GITHUB_RUN_NUMBER||Math.floor(Date.now()/300000));
+targets.forEach((target,index)=>{const choices=rotations[target.id]||[target],sourceIndex=(rotationRound+index)%choices.length;Object.assign(target,choices[sourceIndex],{sourceIndex,round:rotationRound})});
 const output=path.resolve('assets/live-pages');fs.mkdirSync(output,{recursive:true});
 const activePrefixes=targets.map(target=>target.id+'-frame-');
 for(const name of fs.readdirSync(output))if(/-frame-\d+\.jpg$/.test(name)&&!activePrefixes.some(prefix=>name.startsWith(prefix)))fs.rmSync(path.join(output,name),{force:true});
@@ -84,5 +148,5 @@ if(activeTargets.length<targets.length){
  try{const source=fs.readFileSync(path.join(output,'manifest.js'),'utf8'),json=source.slice(source.indexOf('=')+1).trim().replace(/;$/,'');previous=JSON.parse(json).streams||[]}catch{}
  results=targets.map(target=>captured.find(stream=>stream.id===target.id)||previous.find(stream=>stream.id===target.id)).filter(Boolean);
 }
-const manifest={capturedAt:new Date().toISOString(),refreshMinutes:5,mode:'real-browser-dom-trace',streams:results};
+const manifest={capturedAt:new Date().toISOString(),refreshMinutes:5,round:rotationRound,mode:'real-browser-dom-trace',streams:results};
 fs.writeFileSync(path.join(output,'manifest.js'),'window.VEEMO_PAGE_STREAMS='+JSON.stringify(manifest)+';\n');console.log(JSON.stringify(manifest,null,2));
