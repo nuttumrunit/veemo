@@ -84,5 +84,5 @@ if(activeTargets.length<targets.length){
  try{const source=fs.readFileSync(path.join(output,'manifest.js'),'utf8'),json=source.slice(source.indexOf('=')+1).trim().replace(/;$/,'');previous=JSON.parse(json).streams||[]}catch{}
  results=targets.map(target=>captured.find(stream=>stream.id===target.id)||previous.find(stream=>stream.id===target.id)).filter(Boolean);
 }
-const manifest={capturedAt:new Date().toISOString(),refreshMinutes:15,mode:'real-browser-dom-trace',streams:results};
+const manifest={capturedAt:new Date().toISOString(),refreshMinutes:5,mode:'real-browser-dom-trace',streams:results};
 fs.writeFileSync(path.join(output,'manifest.js'),'window.VEEMO_PAGE_STREAMS='+JSON.stringify(manifest)+';\n');console.log(JSON.stringify(manifest,null,2));

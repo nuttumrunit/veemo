@@ -62,11 +62,10 @@
   }
   function advance(image,frames,observations,status,action,target){
     if(!image||!frames.length)return;
-    var current=Number(image.dataset.frameIndex||0),pass=Number(image.dataset.pass||1);
-    if(current>=frames.length-1){var hold=Number(image.dataset.hold||0)+1;image.dataset.hold=String(hold);if(status)status.textContent='pass '+String(pass).padStart(2,'0')+' verified';if(hold<6)return;image.dataset.hold='0';image.dataset.frameIndex='-1';pass+=1;image.dataset.pass=String(pass);current=-1;if(status)status.textContent='starting pass '+String(pass).padStart(2,'0')}
-    var next=current+1,observation=observations[next]||observations[Math.max(0,current)];
+    var current=Math.max(0,Number(image.dataset.frameIndex||0)),next=Math.min(current+1,frames.length-1),observation=observations[next]||observations[current];
+    if(next===current){if(status)status.textContent='awaiting fresh capture';return}
     showFrame(image,frames[next],next,function(){
-      if(status)status.textContent=next===frames.length-1?'pass '+String(pass).padStart(2,'0')+' complete':observation?observation.action.toLowerCase():'reading real page';
+      if(status)status.textContent=next===frames.length-1?'trace complete / awaiting new data':observation?observation.action.toLowerCase():'reading real page';
       if(observation){if(action)action.textContent=observation.action;if(target)target.textContent=observation.target}
     })
   }
@@ -74,7 +73,7 @@
     document.querySelectorAll('.repo-live-tile').forEach(function(tile,index){var s=streams[index],image=tile.querySelector('.stream-tile-image img');if(image&&!image.dataset.frameIndex)image.dataset.frameIndex='0';advance(image,s.frames||[],s.observations||[],tile.querySelector('footer em'))});
     var active=streams[state.index],image=stage&&stage.querySelector('.stream-page img');advance(image,active.frames||[],active.observations||[],null,stage&&stage.querySelector('[data-real-action]'),stage&&stage.querySelector('[data-real-target]'))
   }
-  copy();renderWall();main(0,false);realWork();setInterval(realWork,900);
+  copy();renderWall();main(0,false);realWork();setInterval(realWork,2200);
   setInterval(function(){if(Date.now()<state.manualUntil)return;main((state.index+1)%streams.length,false);var p=stage&&stage.querySelector('.stream-page');if(p){p.classList.add('stream-hop');setTimeout(function(){p.classList.remove('stream-hop')},400)}},22000);
-  setTimeout(function(){location.reload()},Math.max(60000,(data.refreshMinutes||15)*60000))
+  setInterval(function(){fetch('./assets/live-pages/manifest.js?fresh='+Date.now(),{cache:'no-store'}).then(function(response){return response.text()}).then(function(source){var match=source.match(/"capturedAt":"([^"]+)"/);if(match&&match[1]&&match[1]!==data.capturedAt)location.reload()}).catch(function(){})},30000)
 }());
