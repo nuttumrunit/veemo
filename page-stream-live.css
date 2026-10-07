@@ -1,8 +1,6 @@
 .stream-page{position:absolute;inset:0;display:block;overflow:hidden;background:#050806}
-.stream-page img,.stream-tile-image img{position:absolute;inset:-1.5%;display:block;width:103%;height:103%;object-fit:cover;object-position:top left;opacity:1;transform:translate3d(0,-.9%,0) scale(1.012)!important;transition:opacity 1.8s ease,transform 2.45s linear;will-change:opacity,transform}
-.stream-page img.stream-frame-enter,.stream-tile-image img.stream-frame-enter{opacity:0;transform:translate3d(0,1.15%,0) scale(1.006)!important}
-.stream-page img.stream-frame-active,.stream-tile-image img.stream-frame-active{opacity:1;transform:translate3d(0,-1.15%,0) scale(1.018)!important}
-.stream-page img.stream-frame-exit,.stream-tile-image img.stream-frame-exit{opacity:0;transform:translate3d(0,-2.1%,0) scale(1.024)!important}
+.stream-page img,.stream-tile-image img{position:absolute;top:0;left:0;display:block;width:100%;height:auto;max-width:none;object-fit:initial;object-position:top left;transform:translate3d(0,0,0);will-change:transform}
+.stream-page img.natural-page-scroll.is-scrolling,.stream-tile-image img.natural-page-scroll.is-scrolling{animation:naturalPageScroll var(--scroll-duration,90s) linear forwards!important}
 .stream-page-status{position:absolute;right:10px;bottom:10px;z-index:3;padding:5px 8px;color:#110704;background:#ff8757;font:600 6px var(--mono);letter-spacing:.1em}
 .cross-live .gh-native-page{position:relative;min-height:0}
 .cross-live .gh-native-browser em{margin-left:auto;color:#ff8757;font:5px var(--mono);font-style:normal}
@@ -12,5 +10,6 @@
 .cross-agent-wall .repo-live-tile[data-ok=false] img{filter:grayscale(1) brightness(.3)}
 .cross-agent-wall .repo-live-tile[data-ok=false] header b{color:#ff6b73}
 .cell-proof-banner [data-page-source]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-@media(prefers-reduced-motion:reduce){.stream-page img,.stream-tile-image img{transition:opacity .3s linear;transform:none!important}}
+@keyframes naturalPageScroll{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,var(--scroll-distance,0),0)}}
+@media(prefers-reduced-motion:reduce){.stream-page img,.stream-tile-image img{animation-duration:1ms!important}}
 @media(max-width:680px){.stream-page img{object-position:top center}.stream-tile-image{inset:20px 0 0}}

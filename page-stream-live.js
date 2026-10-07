@@ -8,6 +8,7 @@
   function short(v){return String(v||'').replace(/^https?:\/\//,'').replace(/\/$/,'')}
   function time(){return new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(captured)}
   function img(s){return './'+s.image+'?v='+cache}
+  function scrollImg(s){return './'+(s.scrollImage||s.image)+'?v='+cache}
   function route(name){
     document.querySelectorAll('.app-view').forEach(function(v){v.classList.toggle('is-active',v.dataset.view===name)});
     document.querySelectorAll('[data-route]').forEach(function(a){a.classList.toggle('active',a.dataset.route===name)});
@@ -25,7 +26,7 @@
   }
   function frame(s){
     var status=s.stale?'LAST GOOD TRACE':s.ok?'REAL PAGE / LIVE':'PAGE UNAVAILABLE',first=(s.observations||[])[0]||{action:s.stale?'REPLAY VERIFIED TRACE':'OPEN PAGE',target:s.title};
-    return '<div class="gh-native-live cross-live"><div class="gh-native-browser"><span class="browser-lights"><i></i><i></i><i></i></span><b>'+esc(s.system)+'</b><code>'+esc(short(s.url))+'</code><a href="'+esc(s.url)+'" target="_blank" rel="noopener">OPEN PAGE</a><em>'+status+' / TASK '+(Number(s.sourceIndex||0)+1)+'</em></div><nav class="gh-agent-channels" aria-label="Live public-page agents"></nav><section class="gh-native-page"><a class="stream-page" href="'+esc(s.url)+'" target="_blank" rel="noopener"><img src="'+esc(img(s))+'" alt="Real page: '+esc(s.title)+'"><span class="stream-page-status">'+status+' / REAL DOM TRACE</span></a></section><div class="gh-native-log"><header><b>LIVE PAGE TRACE</b><span>'+esc(s.agent)+'</span><em>REAL PUBLIC SOURCE</em></header><div><p><time>'+esc(time())+'</time><b>OPEN</b><span>'+esc(short(s.url))+'</span><strong>'+(s.ok?'200':'ERR')+'</strong></p><p><time>LIVE</time><b data-real-action>'+esc(first.action)+'</b><span data-real-target>'+esc(first.target)+'</span><strong>DOM</strong></p></div></div></div>'
+    return '<div class="gh-native-live cross-live"><div class="gh-native-browser"><span class="browser-lights"><i></i><i></i><i></i></span><b>'+esc(s.system)+'</b><code>'+esc(short(s.url))+'</code><a href="'+esc(s.url)+'" target="_blank" rel="noopener">OPEN PAGE</a><em>'+status+' / TASK '+(Number(s.sourceIndex||0)+1)+'</em></div><nav class="gh-agent-channels" aria-label="Live public-page agents"></nav><section class="gh-native-page"><a class="stream-page" href="'+esc(s.url)+'" target="_blank" rel="noopener"><img class="natural-page-scroll" src="'+esc(scrollImg(s))+'" alt="Real page: '+esc(s.title)+'"><span class="stream-page-status">'+status+' / CONTINUOUS PAGE</span></a></section><div class="gh-native-log"><header><b>LIVE PAGE TRACE</b><span>'+esc(s.agent)+'</span><em>REAL PUBLIC SOURCE</em></header><div><p><time>'+esc(time())+'</time><b>OPEN</b><span>'+esc(short(s.url))+'</span><strong>'+(s.ok?'200':'ERR')+'</strong></p><p><time>LIVE</time><b data-real-action>'+esc(first.action)+'</b><span data-real-target>'+esc(first.target)+'</span><strong>DOM</strong></p></div></div></div>'
   }
   function telemetry(active){
     var good=streams.filter(function(s){return s.ok}).length,systems=new Set(streams.map(function(s){return s.system})).size;
@@ -37,7 +38,7 @@
   }
   function main(index,manual){
     state.index=(index+streams.length)%streams.length;var s=streams[state.index];if(!stage||!screen)return;stage.innerHTML=frame(s);
-    var heroImage=stage.querySelector('.stream-page img');if(heroImage)heroImage.dataset.frameIndex='0';
+    var heroImage=stage.querySelector('.stream-page img');mountNaturalScroll(heroImage,s,true);
     var nav=stage.querySelector('.gh-agent-channels');streams.forEach(function(item,i){var b=document.createElement('button');b.className='gh-agent-channel'+(i===state.index?' active':'');b.innerHTML='<span>'+String(i+1).padStart(2,'0')+'</span><b>'+esc(item.system)+'</b><i>'+esc(item.agent)+'</i>';b.onclick=function(){main(i,true)};nav.append(b)});
     var h=screen.querySelector(':scope > header');if(h)h.innerHTML='<span><i></i><b>'+esc(s.agent)+'</b>&nbsp; '+String(state.index+1).padStart(2,'0')+'/'+String(streams.length).padStart(2,'0')+'&nbsp; / &nbsp;'+esc(s.system)+'</span><em>'+(s.stale?'LAST GOOD TRACE':'REAL PAGE LIVE')+'</em>';
     var f=screen.querySelector(':scope > footer');if(f)f.innerHTML='<span>'+esc(s.system)+'</span><i>/</i><b>'+esc(s.title)+'</b><em>'+(s.ok?'CAPTURE OK':'UNAVAILABLE')+'</em>';
@@ -45,46 +46,23 @@
   }
   function renderWall(){
     if(!wall)return;wall.className='machine-wall repo-live-wall twelve github-synced-wall cross-agent-wall';wall.innerHTML='';
-    streams.forEach(function(s,i){var tile=document.createElement('article');tile.className='repo-live-tile';tile.dataset.ok=String(!!s.ok);tile.tabIndex=0;tile.style.setProperty('--stream-delay',(-i*1.35)+'s');tile.style.setProperty('--stream-speed',(15+(i%5)*2)+'s');tile.innerHTML='<header><span><i></i>'+String(i+1).padStart(2,'0')+' / '+esc(s.agent)+'</span><b>'+(s.ok?'LIVE / T'+(Number(s.sourceIndex||0)+1):'ERROR')+'</b></header><div class="repo-live-viewport"><div class="repo-mini-browser">'+esc(short(s.url))+'</div><a class="stream-tile-image" href="'+esc(s.url)+'" target="_blank" rel="noopener"><img src="'+esc(img(s))+'" alt="Real page: '+esc(s.title)+'"></a></div><footer><span>'+esc(s.system)+'</span><b>'+esc(s.title)+'</b><em>scrolling</em></footer>';
-      function select(e){if(e&&e.target.closest('a'))return;main(i,true);route('live')}tile.onclick=select;tile.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();select(e)}};wall.append(tile)
+    streams.forEach(function(s,i){var tile=document.createElement('article');tile.className='repo-live-tile';tile.dataset.ok=String(!!s.ok);tile.tabIndex=0;tile.innerHTML='<header><span><i></i>'+String(i+1).padStart(2,'0')+' / '+esc(s.agent)+'</span><b>'+(s.ok?'LIVE / T'+(Number(s.sourceIndex||0)+1):'ERROR')+'</b></header><div class="repo-live-viewport"><div class="repo-mini-browser">'+esc(short(s.url))+'</div><a class="stream-tile-image" href="'+esc(s.url)+'" target="_blank" rel="noopener"><img class="natural-page-scroll" src="'+esc(scrollImg(s))+'" alt="Real page: '+esc(s.title)+'"></a></div><footer><span>'+esc(s.system)+'</span><b>'+esc(s.title)+'</b><em>scrolling real page</em></footer>';
+      function select(e){if(e&&e.target.closest('a'))return;main(i,true);route('live')}tile.onclick=select;tile.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();select(e)}};wall.append(tile);mountNaturalScroll(tile.querySelector('.stream-tile-image img'),s,false)
     });
     var command=document.querySelector('.machine-command');if(command){var title=command.querySelector('b'),summary=command.querySelector('em'),buttons=command.querySelectorAll('nav button');if(title)title.textContent='agents watch --apis --chain --live';if(summary)summary.textContent='# 12 agents / real public pages';var labels=['[p]ages','[t]races','[a]gents 12','[c]hain 3','[a]pis 6','[l]ive 12','[e]rrors '+streams.filter(function(s){return !s.ok}).length];buttons.forEach(function(b,i){if(labels[i])b.textContent=labels[i]})}
     var status=document.querySelector('.machine-wall-status > span');if(status)status.innerHTML='<b>veemo</b> "real pages / public APIs / Solana"'
   }
-  function showFrame(image,url,index,onDisplay){
-    if(!image||!url)return;
-    var parent=image.parentNode;if(!parent||parent.dataset.pending)return;
-    var next='./'+url+'?v='+cache;
-    if(image.src.endsWith(next)){image.dataset.frameIndex=String(index);if(onDisplay)onDisplay();return}
-    parent.dataset.pending=next;
-    var preload=new Image();
-    preload.onload=function(){
-      if(parent.dataset.pending!==next)return;
-      var incoming=document.createElement('img');
-      incoming.src=next;incoming.alt=image.alt;incoming.dataset.frameIndex=String(index);incoming.className='stream-frame-enter';
-      parent.insertBefore(incoming,image.nextSibling);
-      void incoming.offsetWidth;
-      image.classList.add('stream-frame-exit');incoming.classList.add('stream-frame-active');
-      if(onDisplay)onDisplay();
-      setTimeout(function(){if(image.parentNode===parent)image.remove();parent.dataset.pending=''},1850)
-    };
-    preload.onerror=function(){if(parent.dataset.pending===next)parent.dataset.pending=''};
-    preload.src=next
+  function mountNaturalScroll(image,stream,hero){
+    if(!image)return;
+    function ready(){var viewport=image.parentNode,rendered=image.naturalHeight*(viewport.clientWidth/image.naturalWidth),distance=Math.max(0,rendered-viewport.clientHeight),duration=Math.max(48,Math.min(150,distance/(hero?105:34)));image.style.setProperty('--scroll-distance','-'+distance+'px');image.style.setProperty('--scroll-duration',duration+'s');image.dataset.started=String(Date.now());image.dataset.duration=String(duration*1000);image.classList.add('is-scrolling')}
+    if(image.complete&&image.naturalWidth)ready();else image.addEventListener('load',ready,{once:true})
   }
-  function advance(image,frames,observations,status,action,target){
-    if(!image||!frames.length)return;
-    var current=Math.max(0,Number(image.dataset.frameIndex||0)),next=Math.min(current+1,frames.length-1),observation=observations[next]||observations[current];
-    if(next===current){if(status)status.textContent='awaiting fresh capture';return}
-    showFrame(image,frames[next],next,function(){
-      if(status)status.textContent=next===frames.length-1?'trace complete / awaiting new data':observation?observation.action.toLowerCase():'reading real page';
-      if(observation){if(action)action.textContent=observation.action;if(target)target.textContent=observation.target;if(image.closest('.stream-page')){var progress=document.querySelector('[data-live-progress]');if(progress)progress.textContent=observation.action+' / '+observation.target}}
-    })
+  function currentObservation(stream,y){var observations=stream.observations||[],current=observations[0];observations.forEach(function(item){if(item.scrollY<=y)current=item});return current}
+  function updateNaturalProgress(){
+    document.querySelectorAll('.repo-live-tile').forEach(function(tile,index){var image=tile.querySelector('.natural-page-scroll'),stream=streams[index];if(!image||!image.dataset.started)return;var ratio=Math.min(1,(Date.now()-Number(image.dataset.started))/Number(image.dataset.duration)),current=currentObservation(stream,ratio*(stream.scrollHeight||0)),status=tile.querySelector('footer em');if(status)status.textContent=ratio>=1?'awaiting fresh page':current?current.action.toLowerCase():'scrolling real page'});
+    var image=stage&&stage.querySelector('.natural-page-scroll'),active=streams[state.index];if(!image||!image.dataset.started)return;var ratio=Math.min(1,(Date.now()-Number(image.dataset.started))/Number(image.dataset.duration)),current=currentObservation(active,ratio*(active.scrollHeight||0));if(current){var action=stage.querySelector('[data-real-action]'),target=stage.querySelector('[data-real-target]'),progress=document.querySelector('[data-live-progress]');if(action)action.textContent=current.action;if(target)target.textContent=current.target;if(progress)progress.textContent=active.agent+' / '+current.action+' / '+current.target}
   }
-  function realWork(){
-    document.querySelectorAll('.repo-live-tile').forEach(function(tile,index){var s=streams[index],image=tile.querySelector('.stream-tile-image img');if(image&&!image.dataset.frameIndex)image.dataset.frameIndex='0';advance(image,s.frames||[],s.observations||[],tile.querySelector('footer em'))});
-    var active=streams[state.index],image=stage&&stage.querySelector('.stream-page img');advance(image,active.frames||[],active.observations||[],null,stage&&stage.querySelector('[data-real-action]'),stage&&stage.querySelector('[data-real-target]'))
-  }
-  copy();renderWall();main(0,false);realWork();setInterval(realWork,2600);
-  setInterval(function(){if(Date.now()<state.manualUntil)return;main((state.index+1)%streams.length,false)},60000);
+  copy();renderWall();main(0,false);setInterval(updateNaturalProgress,500);
+  setInterval(function(){if(Date.now()<state.manualUntil)return;main((state.index+1)%streams.length,false)},120000);
   setInterval(function(){fetch('./assets/live-pages/manifest.js?fresh='+Date.now(),{cache:'no-store'}).then(function(response){return response.text()}).then(function(source){var match=source.match(/"capturedAt":"([^"]+)"/);if(match&&match[1]&&match[1]!==data.capturedAt)location.reload()}).catch(function(){})},30000)
 }());
