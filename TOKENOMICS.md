@@ -6,7 +6,7 @@ Veemo uses an activation sink and an operating-revenue loop. This document defin
 
 A public verifier Agent is activated by an irreversible burn of `$VEEMO`. The burn transaction binds the operator wallet to one Agent identity. Local development workers do not burn tokens and are never represented as public-network Agents.
 
-The token mint is `TBA`. Public Agent activation burns `10,000 $VEEMO`. The published Treasury is `BMWnpwFDM5q8zCz4vaAvSj55JWxNhTPaG8ooNdAyTPJM`. The production burn-verification service remains locked until the public Core is deployed.
+The token mint is `CcSchh9dGiZ8y1aVTBiAvPtmqqnFRnSx2ZazT641pump`. Public Agent activation burns `10,000 $VEEMO`. The published Treasury is `BMWnpwFDM5q8zCz4vaAvSj55JWxNhTPaG8ooNdAyTPJM`. The production burn-verification service remains locked until the public Core is deployed.
 
 ## On-chain token controls
 

@@ -48,7 +48,7 @@
     if (host) {
       const online = state.machines.filter(machine => machine.status !== 'offline').length;
       const snapshot=telemetry.snapshot===true;
-      const checks = [['CORE',snapshot?'LOCAL ONLY':'READY',snapshot?'run npm start to activate':`${Math.floor(telemetry.uptimeSec/60)}m uptime`],['AGENTS',snapshot?'OBSERVED':online?'READY':'WAIT',snapshot?`${channels.length} public observers`:`${online}/${state.machines.length} online`],['SOURCES',channels.length?'READY':'WAIT',`${channels.filter(item=>!item.error).length}/${channels.length} readable`],['QUORUM',!snapshot&&online>=3?'READY':'WAIT','2 independent replays required'],['CREATOR REWARDS','READY','80% compute · 20% agents'],['TOKEN / CA','PENDING','TBA']];
+      const checks = [['CORE',snapshot?'LOCAL ONLY':'READY',snapshot?'run npm start to activate':`${Math.floor(telemetry.uptimeSec/60)}m uptime`],['AGENTS',snapshot?'OBSERVED':online?'READY':'WAIT',snapshot?`${channels.length} public observers`:`${online}/${state.machines.length} online`],['SOURCES',channels.length?'READY':'WAIT',`${channels.filter(item=>!item.error).length}/${channels.length} readable`],['QUORUM',!snapshot&&online>=3?'READY':'WAIT','2 independent replays required'],['CREATOR REWARDS','READY','80% compute · 20% agents'],['TOKEN / CA','LIVE','CcSchh9dGiZ8y1aVTBiAvPtmqqnFRnSx2ZazT641pump']];
       host.innerHTML = checks.map(([name,status,detail]) => `<article class="${status==='READY'?'ready':'pending'}"><span>${esc(name)}</span><b>${status}</b><small>${esc(detail)}</small></article>`).join('');
     }
     const events = $('[data-runtime-events]');
