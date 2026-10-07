@@ -1,6 +1,5 @@
-(function(){window.VEEMO_FOUNDRY=true;document.body.classList.add('github-live-mounted');const h=document.head;for(const file of ['agent-wall.css','foundry-live.css']){const l=document.createElement('link');l.rel='stylesheet';l.href='./'+file+'?v=3';h.append(l)}for(const file of ['assets/foundry-state.js','agent-wall.js','foundry-live.js']){const s=document.createElement('script');s.src='./'+file+'?v=3';s.async=false;h.append(s)}})();
+(function(){const h=document.head,l=document.createElement('link'),s=document.createElement('script');l.rel='stylesheet';l.href='./agent-wall.css?v=1';s.src='./agent-wall.js?v=1';s.defer=true;h.append(l,s)})();
 (function(){
-  if(window.VEEMO_FOUNDRY)return;
   const stage=document.querySelector('.screen-stage'),screen=document.querySelector('.cell-screen');
   if(!stage||!screen)return;
   document.body.classList.add('github-live-mounted');
