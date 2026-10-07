@@ -1,3 +1,4 @@
+(function(){const h=document.head,l=document.createElement('link'),s=document.createElement('script');l.rel='stylesheet';l.href='./agent-wall.css?v=1';s.src='./agent-wall.js?v=1';s.defer=true;h.append(l,s)})();
 (function(){
   const stage=document.querySelector('.screen-stage'),screen=document.querySelector('.cell-screen');
   if(!stage||!screen)return;
