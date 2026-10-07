@@ -1,4 +1,3 @@
-(function(){const h=document.head,l=document.createElement('link'),s=document.createElement('script');l.rel='stylesheet';l.href='./forge-live.css?v=1';s.src='./forge-live.js?v=1';h.append(l,s)})();
 (function(){
   const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
   const runtime={state:null,telemetry:null,wallet:null,online:false,lastRequests:0};
