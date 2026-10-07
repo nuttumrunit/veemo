@@ -32,7 +32,8 @@
     var stats=document.querySelector('.cell-inline-stats');if(stats)stats.innerHTML='<span><b>'+streams.length+'</b> agents live</span><i>/</i><span><b>'+systems+'</b> systems</span><i>/</i><span><b>'+good+'</b> pages online</span><i>/</i><span>refresh <b>'+(data.refreshMinutes||15)+'m</b></span><i>/</i><span>capture <b>'+esc(time())+'</b></span>';
     var table=document.querySelector('.process-table');if(table)table.innerHTML='<div><span>PID</span><span>AGENT</span><span>S</span><span>SYSTEM</span><span>PAGE</span><span>HTTP</span><span>CAPTURE</span><span>TARGET</span></div>'+streams.map(function(s,i){return '<p'+(s===active?' class="active"':'')+'><span>'+String(i+1).padStart(2,'0')+'</span><b>'+esc(s.agent)+'</b><span>R</span><span>'+esc(s.system)+'</span><span>1</span><span>'+(s.ok?'OK':'ERR')+'</span><span>'+esc(time())+'</span><em>'+esc(s.title)+'</em></p>'}).join('');
     var meta=document.querySelector('.process-meta');if(meta)meta.innerHTML='<pre> 1['+'#'.repeat(Math.min(streams.length,22)).padEnd(22,' ')+' '+good+'/'+streams.length+' online]\n 2['+'#'.repeat(Math.min(systems,22)).padEnd(22,' ')+' '+systems+' systems]\nAPI[ public sources             ]\nChain[ Solana mainnet           ]</pre><p><span><b>Agents:</b> '+streams.length+' reading real public pages</span><span><b>Active:</b> '+esc(active.agent)+' / '+esc(active.system)+'</span><span><b>Captured:</b> '+esc(time())+'</span><span><b>Refresh:</b> every '+(data.refreshMinutes||15)+' minutes</span></p>';
-    var feed=document.querySelector('.cell-feed');if(feed)feed.innerHTML='<div class="feed-line"><span class="ascii">'+esc(time())+'</span><b>'+esc(active.agent)+'</b><span>'+esc(active.system)+'</span><strong>'+(active.ok?'ok':'error')+'</strong><span>real page capture</span><em>('+esc(short(active.url))+')</em></div><div class="feed-empty"><i></i><span>following public machine systems</span></div>'
+    var first=(active.observations||[])[0]||{action:'OPEN PAGE',target:active.title};
+    var feed=document.querySelector('.cell-feed');if(feed)feed.innerHTML='<div class="feed-line"><span class="ascii">'+esc(time())+'</span><b>'+esc(active.agent)+'</b><span>'+esc(active.system)+'</span><strong>'+(active.ok?'ok':'error')+'</strong><span>real page capture</span><em>('+esc(short(active.url))+')</em></div><div class="feed-empty"><i></i><span data-live-progress>'+esc(active.agent)+' / '+esc(first.action)+' / '+esc(first.target)+'</span></div>'
   }
   function main(index,manual){
     state.index=(index+streams.length)%streams.length;var s=streams[state.index];if(!stage||!screen)return;stage.innerHTML=frame(s);
@@ -51,13 +52,23 @@
     var status=document.querySelector('.machine-wall-status > span');if(status)status.innerHTML='<b>veemo</b> "real pages / public APIs / Solana"'
   }
   function showFrame(image,url,index,onDisplay){
-    if(!image||!url||image.dataset.pending)return;
+    if(!image||!url)return;
+    var parent=image.parentNode;if(!parent||parent.dataset.pending)return;
     var next='./'+url+'?v='+cache;
     if(image.src.endsWith(next)){image.dataset.frameIndex=String(index);if(onDisplay)onDisplay();return}
-    image.dataset.pending=next;
+    parent.dataset.pending=next;
     var preload=new Image();
-    preload.onload=function(){if(image.dataset.pending===next){image.src=next;image.dataset.frameIndex=String(index);image.dataset.pending='';if(onDisplay)onDisplay()}};
-    preload.onerror=function(){if(image.dataset.pending===next)image.dataset.pending=''};
+    preload.onload=function(){
+      if(parent.dataset.pending!==next)return;
+      var incoming=document.createElement('img');
+      incoming.src=next;incoming.alt=image.alt;incoming.dataset.frameIndex=String(index);incoming.className='stream-frame-enter';
+      parent.insertBefore(incoming,image.nextSibling);
+      void incoming.offsetWidth;
+      image.classList.add('stream-frame-exit');incoming.classList.add('stream-frame-active');
+      if(onDisplay)onDisplay();
+      setTimeout(function(){if(image.parentNode===parent)image.remove();parent.dataset.pending=''},1850)
+    };
+    preload.onerror=function(){if(parent.dataset.pending===next)parent.dataset.pending=''};
     preload.src=next
   }
   function advance(image,frames,observations,status,action,target){
@@ -66,14 +77,14 @@
     if(next===current){if(status)status.textContent='awaiting fresh capture';return}
     showFrame(image,frames[next],next,function(){
       if(status)status.textContent=next===frames.length-1?'trace complete / awaiting new data':observation?observation.action.toLowerCase():'reading real page';
-      if(observation){if(action)action.textContent=observation.action;if(target)target.textContent=observation.target}
+      if(observation){if(action)action.textContent=observation.action;if(target)target.textContent=observation.target;if(image.closest('.stream-page')){var progress=document.querySelector('[data-live-progress]');if(progress)progress.textContent=observation.action+' / '+observation.target}}
     })
   }
   function realWork(){
     document.querySelectorAll('.repo-live-tile').forEach(function(tile,index){var s=streams[index],image=tile.querySelector('.stream-tile-image img');if(image&&!image.dataset.frameIndex)image.dataset.frameIndex='0';advance(image,s.frames||[],s.observations||[],tile.querySelector('footer em'))});
     var active=streams[state.index],image=stage&&stage.querySelector('.stream-page img');advance(image,active.frames||[],active.observations||[],null,stage&&stage.querySelector('[data-real-action]'),stage&&stage.querySelector('[data-real-target]'))
   }
-  copy();renderWall();main(0,false);realWork();setInterval(realWork,2200);
-  setInterval(function(){if(Date.now()<state.manualUntil)return;main((state.index+1)%streams.length,false);var p=stage&&stage.querySelector('.stream-page');if(p){p.classList.add('stream-hop');setTimeout(function(){p.classList.remove('stream-hop')},400)}},22000);
+  copy();renderWall();main(0,false);realWork();setInterval(realWork,2600);
+  setInterval(function(){if(Date.now()<state.manualUntil)return;main((state.index+1)%streams.length,false)},60000);
   setInterval(function(){fetch('./assets/live-pages/manifest.js?fresh='+Date.now(),{cache:'no-store'}).then(function(response){return response.text()}).then(function(source){var match=source.match(/"capturedAt":"([^"]+)"/);if(match&&match[1]&&match[1]!==data.capturedAt)location.reload()}).catch(function(){})},30000)
 }());
