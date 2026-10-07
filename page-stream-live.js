@@ -24,7 +24,7 @@
     var spawn=document.querySelector('.cell-actions [data-route="spawn"]');if(spawn)spawn.textContent='SPAWN AN AGENT'
   }
   function frame(s){
-    var status=s.ok?'REAL PAGE / LIVE':'PAGE UNAVAILABLE',first=(s.observations||[])[0]||{action:'OPEN PAGE',target:s.title};
+    var status=s.stale?'LAST GOOD TRACE':s.ok?'REAL PAGE / LIVE':'PAGE UNAVAILABLE',first=(s.observations||[])[0]||{action:s.stale?'REPLAY VERIFIED TRACE':'OPEN PAGE',target:s.title};
     return '<div class="gh-native-live cross-live"><div class="gh-native-browser"><span class="browser-lights"><i></i><i></i><i></i></span><b>'+esc(s.system)+'</b><code>'+esc(short(s.url))+'</code><a href="'+esc(s.url)+'" target="_blank" rel="noopener">OPEN PAGE</a><em>'+status+'</em></div><nav class="gh-agent-channels" aria-label="Live public-page agents"></nav><section class="gh-native-page"><a class="stream-page" href="'+esc(s.url)+'" target="_blank" rel="noopener"><img src="'+esc(img(s))+'" alt="Real page: '+esc(s.title)+'"><span class="stream-page-status">'+status+' / REAL DOM TRACE</span></a></section><div class="gh-native-log"><header><b>LIVE PAGE TRACE</b><span>'+esc(s.agent)+'</span><em>REAL PUBLIC SOURCE</em></header><div><p><time>'+esc(time())+'</time><b>OPEN</b><span>'+esc(short(s.url))+'</span><strong>'+(s.ok?'200':'ERR')+'</strong></p><p><time>LIVE</time><b data-real-action>'+esc(first.action)+'</b><span data-real-target>'+esc(first.target)+'</span><strong>DOM</strong></p></div></div></div>'
   }
   function telemetry(active){
@@ -37,7 +37,7 @@
   function main(index,manual){
     state.index=(index+streams.length)%streams.length;var s=streams[state.index];if(!stage||!screen)return;stage.innerHTML=frame(s);
     var nav=stage.querySelector('.gh-agent-channels');streams.forEach(function(item,i){var b=document.createElement('button');b.className='gh-agent-channel'+(i===state.index?' active':'');b.innerHTML='<span>'+String(i+1).padStart(2,'0')+'</span><b>'+esc(item.system)+'</b><i>'+esc(item.agent)+'</i>';b.onclick=function(){main(i,true)};nav.append(b)});
-    var h=screen.querySelector(':scope > header');if(h)h.innerHTML='<span><i></i><b>'+esc(s.agent)+'</b>&nbsp; '+String(state.index+1).padStart(2,'0')+'/'+String(streams.length).padStart(2,'0')+'&nbsp; / &nbsp;'+esc(s.system)+'</span><em>REAL PAGE LIVE</em>';
+    var h=screen.querySelector(':scope > header');if(h)h.innerHTML='<span><i></i><b>'+esc(s.agent)+'</b>&nbsp; '+String(state.index+1).padStart(2,'0')+'/'+String(streams.length).padStart(2,'0')+'&nbsp; / &nbsp;'+esc(s.system)+'</span><em>'+(s.stale?'LAST GOOD TRACE':'REAL PAGE LIVE')+'</em>';
     var f=screen.querySelector(':scope > footer');if(f)f.innerHTML='<span>'+esc(s.system)+'</span><i>/</i><b>'+esc(s.title)+'</b><em>'+(s.ok?'CAPTURE OK':'UNAVAILABLE')+'</em>';
     document.querySelectorAll('[data-page-source]').forEach(function(n){n.textContent=short(s.url)});telemetry(s);if(manual)state.manualUntil=Date.now()+12000
   }
@@ -50,10 +50,20 @@
     var status=document.querySelector('.machine-wall-status > span');if(status)status.innerHTML='<b>veemo</b> "real pages / public APIs / Solana"'
   }
   var realStep=0;
+  function showFrame(image,url){
+    if(!image||!url)return;
+    var next='./'+url+'?v='+cache;
+    if(image.dataset.pending||image.src.endsWith(next))return;
+    image.dataset.pending=next;
+    var preload=new Image();
+    preload.onload=function(){if(image.dataset.pending===next){image.src=next;image.dataset.pending=''}};
+    preload.onerror=function(){if(image.dataset.pending===next)image.dataset.pending=''};
+    preload.src=next
+  }
   function realWork(){
     realStep++;
-    document.querySelectorAll('.repo-live-tile').forEach(function(tile,index){var s=streams[index],frames=s.frames||[],observations=s.observations||[],step=(realStep+index)%Math.max(1,frames.length),image=tile.querySelector('.stream-tile-image img'),status=tile.querySelector('footer em'),observation=observations[step];if(image&&frames[step])image.src='./'+frames[step]+'?v='+cache;if(status&&observation)status.textContent=observation.action.toLowerCase()});
-    var active=streams[state.index],frames=active.frames||[],observations=active.observations||[],step=realStep%Math.max(1,frames.length),image=stage&&stage.querySelector('.stream-page img'),observation=observations[step];if(image&&frames[step])image.src='./'+frames[step]+'?v='+cache;if(observation){var action=stage.querySelector('[data-real-action]'),target=stage.querySelector('[data-real-target]');if(action)action.textContent=observation.action;if(target)target.textContent=observation.target}
+    document.querySelectorAll('.repo-live-tile').forEach(function(tile,index){var s=streams[index],frames=s.frames||[],observations=s.observations||[],step=(realStep+index)%Math.max(1,frames.length),image=tile.querySelector('.stream-tile-image img'),status=tile.querySelector('footer em'),observation=observations[step];showFrame(image,frames[step]);if(status&&observation)status.textContent=observation.action.toLowerCase()});
+    var active=streams[state.index],frames=active.frames||[],observations=active.observations||[],step=realStep%Math.max(1,frames.length),image=stage&&stage.querySelector('.stream-page img'),observation=observations[step];showFrame(image,frames[step]);if(observation){var action=stage.querySelector('[data-real-action]'),target=stage.querySelector('[data-real-target]');if(action)action.textContent=observation.action;if(target)target.textContent=observation.target}
   }
   copy();renderWall();main(0,false);realWork();setInterval(realWork,650);
   setInterval(function(){if(Date.now()<state.manualUntil)return;main((state.index+1)%streams.length,false);var p=stage&&stage.querySelector('.stream-page');if(p){p.classList.add('stream-hop');setTimeout(function(){p.classList.remove('stream-hop')},400)}},22000)
