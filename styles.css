@@ -187,6 +187,7 @@ body{padding-left:var(--sidebar-width)}
 .topbar.veemo-sidebar .header-actions{display:flex!important;width:64px!important;align-self:end!important;flex-direction:column!important;border:0!important}
 .topbar.veemo-sidebar .header-actions .ca{display:flex!important;width:64px!important;height:34px!important;align-items:center!important;justify-content:center!important;padding:0!important;color:#ff8757!important;border-top:1px solid #3a2a24!important;font:600 7px var(--mono)!important;letter-spacing:.08em!important}
 .topbar.veemo-sidebar .header-actions .social-x{font:700 13px var(--mono)!important;text-transform:none!important}
+.topbar.veemo-sidebar .header-actions .official-x-mark{fill:currentColor!important;stroke:none!important}.topbar.veemo-sidebar .header-actions .pump-mark{display:block;width:22px;height:22px;object-fit:contain}
 .topbar.veemo-sidebar .header-actions .buy-cell{color:#120804!important;background:#ff8757!important}
 .topbar.veemo-sidebar .header-actions .buy-cell:hover{color:#000!important;background:#ff9b72!important}
 .cell-live{height:100vh}
@@ -206,8 +207,8 @@ body{padding-left:var(--sidebar-width)}
   .topbar.veemo-sidebar:hover .header-actions,.topbar.veemo-sidebar:focus-within .header-actions{width:218px!important}
   .topbar.veemo-sidebar:hover .header-actions .ca,.topbar.veemo-sidebar:focus-within .header-actions .ca{width:218px!important;justify-content:flex-start!important;padding:0 20px!important;font-size:8px!important}
   .topbar.veemo-sidebar:hover .header-actions .ca::after,.topbar.veemo-sidebar:focus-within .header-actions .ca::after{content:" / CONTRACT ADDRESS";margin-left:7px;color:#80685d}
-  .topbar.veemo-sidebar:hover .header-actions .social-x::after,.topbar.veemo-sidebar:focus-within .header-actions .social-x::after{content:"X / TWITTER";font:600 9px var(--mono);letter-spacing:.08em}
+  .topbar.veemo-sidebar:hover .header-actions .social-x::after,.topbar.veemo-sidebar:focus-within .header-actions .social-x::after{content:"VEEMO ON X";font:600 9px var(--mono);letter-spacing:.08em}
   .topbar.veemo-sidebar:hover .header-actions button::after,.topbar.veemo-sidebar:focus-within .header-actions button::after{content:"CONNECT WALLET";font:600 9px var(--mono);letter-spacing:.08em}
-  .topbar.veemo-sidebar:hover .header-actions .buy-cell::after,.topbar.veemo-sidebar:focus-within .header-actions .buy-cell::after{content:"PUMP.FUN";font:700 9px var(--mono);letter-spacing:.08em}
+  .topbar.veemo-sidebar:hover .header-actions .buy-cell::after,.topbar.veemo-sidebar:focus-within .header-actions .buy-cell::after{content:"BUY $VEEMO";font:700 9px var(--mono);letter-spacing:.08em}
   .topbar.veemo-sidebar:hover nav a[title]::before,.topbar.veemo-sidebar:focus-within nav a[title]::before,.topbar.veemo-sidebar:hover .header-actions>[title]::before,.topbar.veemo-sidebar:focus-within .header-actions>[title]::before{display:none!important}
 }
