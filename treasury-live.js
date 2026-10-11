@@ -4,9 +4,9 @@
   const command=document.querySelector('.treasury-workstation .work-command em');
   const subhead=document.querySelector('.treasury-summary .subhead b');
   if(command)command.innerHTML='<i></i> treasury not configured';
-  if(subhead)subhead.textContent='prelaunch / TBA';
+  if(subhead)subhead.textContent='token live / treasury TBA';
   setCard(cards[0],'treasury address','TBA','awaiting official address');
-  setCard(cards[1],'VEE token CA','TBA','token data unavailable');
+  setCard(cards[1],'VEE token CA','YD3VPs…Hdpump','official mint');
   setCard(cards[2],'compute allocation','80%','published policy');
   setCard(cards[3],'agent allocation','20%','published policy');
   document.body.dataset.treasury='not-configured';
