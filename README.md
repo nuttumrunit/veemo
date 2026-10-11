@@ -92,8 +92,8 @@ npm run check
 npm test
 ```
 
-The $VEEMO mint and Pump.fun market are live. The token has 0% transfer tax, with mint and freeze authorities revoked. Treasury is published at `BMWnpwFDM5q8zCz4vaAvSj55JWxNhTPaG8ooNdAyTPJM` and public Agent activation is set to burn 10,000 $VEEMO. The public burn-verification service remains locked until the production Core is deployed.
+The `$VEE` token CA and Treasury address are currently TBA. No market, authority, tax, balance or on-chain activation claim is shown until the official addresses are published and verified. Public Agent activation remains locked.
 
 ## Token loop
 
-Public Agent activation burns $VEEMO. Pump.fun creator rewards route 80% to the compute reserve and 20% to the verified-Agent epoch pool. The CA, treasury and 10,000 $VEEMO Agent burn are published. Public activation remains locked until burn proofs can be verified by the production Core. See [TOKENOMICS.md](./TOKENOMICS.md).
+The intended network policy uses operating revenue to route 80% to compute and 20% to the verified-Agent epoch pool. The `$VEE` CA, Treasury address and activation contract remain TBA, so public activation is locked. See [TOKENOMICS.md](./TOKENOMICS.md).

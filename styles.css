@@ -212,3 +212,4 @@ body{padding-left:var(--sidebar-width)}
   .topbar.veemo-sidebar:hover .header-actions .buy-cell::after,.topbar.veemo-sidebar:focus-within .header-actions .buy-cell::after{content:"BUY $VEE";font:700 9px var(--mono);letter-spacing:.08em}
   .topbar.veemo-sidebar:hover nav a[title]::before,.topbar.veemo-sidebar:focus-within nav a[title]::before,.topbar.veemo-sidebar:hover .header-actions>[title]::before,.topbar.veemo-sidebar:focus-within .header-actions>[title]::before{display:none!important}
 }
+.cell-actions>span.pump-action{position:relative;z-index:2;display:inline-flex;min-width:166px;min-height:44px;align-items:center;justify-content:center;padding:12px 18px;border:1px solid #3a2a24;font:600 9px var(--mono);letter-spacing:.08em;white-space:nowrap;cursor:not-allowed}

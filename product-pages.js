@@ -15,7 +15,7 @@
     const lineageLedger = $('.lineage-ledger');
     if (lineageLedger && !$('.lineage-observation-ledger', lineageLedger)) lineageLedger.insertAdjacentHTML('beforeend', '<section class="lineage-observation-ledger"><header><b>LIVE OBSERVATIONS</b><span>source heads only / excluded from accepted generation count</span></header><div data-observation-ledger></div></section>');    const ledger = $('.treasury-ledger');
     const empty = $('.ledger-empty', ledger);
-    if (ledger && empty) { empty.className = 'treasury-preflight'; empty.innerHTML = '<header><b>PRE-GENESIS CONTROL PLANE</b><span>Treasury published at BMWnpwFDM5q8zCz4vaAvSj55JWxNhTPaG8ooNdAyTPJM.</span></header><div class="preflight-grid" data-preflight></div><section class="runtime-audit"><div><b>LOCAL RUNTIME AUDIT</b><span>off-chain events · never represented as transfers</span></div><ol data-runtime-events><li>loading core events…</li></ol></section>'; }
+    if (ledger && empty) { empty.className = 'treasury-preflight'; empty.innerHTML = '<header><b>PRE-GENESIS CONTROL PLANE</b><span>Treasury address is TBA; no on-chain balance is claimed.</span></header><div class="preflight-grid" data-preflight></div><section class="runtime-audit"><div><b>LOCAL RUNTIME AUDIT</b><span>off-chain events · never represented as transfers</span></div><ol data-runtime-events><li>loading core events…</li></ol></section>'; }
     const review = $('.spawn-review');
     if (review && !$('.spawn-terminal', review)) review.insertAdjacentHTML('beforeend', '<section class="spawn-terminal"><header><b>WORKER BOOTSTRAP</b><span>generated locally</span></header><pre><code data-spawn-command>node worker.mjs start --auto</code></pre><button type="button" data-copy-command>copy command</button><p>Registration returns a one-time machine secret. Store it outside source control.</p></section>');
     const manual = $('.manual-page');
@@ -48,7 +48,7 @@
     if (host) {
       const online = state.machines.filter(machine => machine.status !== 'offline').length;
       const snapshot=telemetry.snapshot===true;
-      const checks = [['CORE',snapshot?'LOCAL ONLY':'READY',snapshot?'run npm start to activate':`${Math.floor(telemetry.uptimeSec/60)}m uptime`],['AGENTS',snapshot?'OBSERVED':online?'READY':'WAIT',snapshot?`${channels.length} public observers`:`${online}/${state.machines.length} online`],['SOURCES',channels.length?'READY':'WAIT',`${channels.filter(item=>!item.error).length}/${channels.length} readable`],['QUORUM',!snapshot&&online>=3?'READY':'WAIT','2 independent replays required'],['CREATOR REWARDS','READY','80% compute · 20% agents'],['TOKEN / CA','LIVE','CcSchh9dGiZ8y1aVTBiAvPtmqqnFRnSx2ZazT641pump']];
+      const checks = [['CORE',snapshot?'LOCAL ONLY':'READY',snapshot?'run npm start to activate':`${Math.floor(telemetry.uptimeSec/60)}m uptime`],['AGENTS',snapshot?'OBSERVED':online?'READY':'WAIT',snapshot?`${channels.length} public observers`:`${online}/${state.machines.length} online`],['SOURCES',channels.length?'READY':'WAIT',`${channels.filter(item=>!item.error).length}/${channels.length} readable`],['QUORUM',!snapshot&&online>=3?'READY':'WAIT','2 independent replays required'],['CREATOR REWARDS','READY','80% compute · 20% agents'],['TOKEN / CA','TBA','awaiting official mint']];
       host.innerHTML = checks.map(([name,status,detail]) => `<article class="${status==='READY'?'ready':'pending'}"><span>${esc(name)}</span><b>${status}</b><small>${esc(detail)}</small></article>`).join('');
     }
     const events = $('[data-runtime-events]');

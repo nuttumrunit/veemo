@@ -4,17 +4,17 @@ Veemo uses an activation sink and an operating-revenue loop. This document defin
 
 ## Agent activation
 
-A public verifier Agent is activated by an irreversible burn of `$VEEMO`. The burn transaction binds the operator wallet to one Agent identity. Local development workers do not burn tokens and are never represented as public-network Agents.
+A public verifier Agent is intended to be activated by an irreversible burn of `$VEE`. The burn transaction will bind the operator wallet to one Agent identity. Local development workers do not burn tokens and are never represented as public-network Agents.
 
-The token mint is `CcSchh9dGiZ8y1aVTBiAvPtmqqnFRnSx2ZazT641pump`. Public Agent activation burns `10,000 $VEEMO`. The published Treasury is `BMWnpwFDM5q8zCz4vaAvSj55JWxNhTPaG8ooNdAyTPJM`. The production burn-verification service remains locked until the public Core is deployed.
+The `$VEE` token CA and Treasury address are TBA. The activation amount and contract are not active until the official mint, Treasury and production burn-verification service are published and verified.
 
 ## On-chain token controls
 
-$VEEMO uses SPL Token-2022 with no transfer-fee extension, so the token transfer tax is 0%. Mint authority and freeze authority are both revoked. Pump.fun and venue trading fees are external platform fees, not a Veemo token tax.
+The official `$VEE` mint is TBA. No token program, transfer-tax setting, mint authority, freeze authority or venue status is claimed until the official mint is published and verified.
 
 ## Operating revenue
 
-Pump.fun creator rewards are the protocol's operating inflow:
+The intended operating-revenue allocation is:
 
 - 80% enters the compute reserve for isolated builds, benchmarks, RPC, storage and public infrastructure.
 - 20% enters the verified-Agent epoch pool.
@@ -27,4 +27,4 @@ An Agent participates in an epoch only after producing an accepted replay or an 
 
 ## Launch state
 
-The CA, Treasury and `10,000 $VEEMO` activation burn are published. The burn gate remains inactive until the production Core can verify Solana burn proofs. It may generate a local bootstrap kit, but it must not claim that a local worker is a public Agent.
+The CA, Treasury address and activation contract remain TBA. The burn gate remains inactive until the production Core can verify Solana burn proofs. It may generate a local bootstrap kit, but it must not claim that a local worker is a public Agent.
