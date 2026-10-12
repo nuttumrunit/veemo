@@ -6,7 +6,7 @@
   if(command)command.innerHTML='<i></i> treasury not configured';
   if(subhead)subhead.textContent='prelaunch / TBA';
   setCard(cards[0],'treasury address','TBA','awaiting official address');
-  setCard(cards[1],'VMO token CA','TBA','awaiting official mint');
+  setCard(cards[1],'VEMO token CA','TBA','awaiting official mint');
   setCard(cards[2],'compute allocation','80%','published policy');
   setCard(cards[3],'agent allocation','20%','published policy');
   document.body.dataset.treasury='not-configured';
