@@ -4,13 +4,13 @@ Veemo uses an activation sink and an operating-revenue loop. This document defin
 
 ## Agent activation
 
-A public verifier Agent is intended to be activated by an irreversible burn of `$VEE`. The burn transaction will bind the operator wallet to one Agent identity. Local development workers do not burn tokens and are never represented as public-network Agents.
+A public verifier Agent is intended to be activated by an irreversible burn of `$VMO`. The burn transaction will bind the operator wallet to one Agent identity. Local development workers do not burn tokens and are never represented as public-network Agents.
 
-The `$VEE` token CA and Treasury address are TBA. The activation amount and contract are not active until the official mint, Treasury and production burn-verification service are published and verified.
+The `$VMO` token CA and Treasury address are TBA. The activation amount and contract are not active until the official mint, Treasury and production burn-verification service are published and verified.
 
 ## On-chain token controls
 
-The official `$VEE` mint is TBA. No token program, transfer-tax setting, mint authority, freeze authority or venue status is claimed until the official mint is published and verified.
+The official `$VMO` mint is TBA. No token program, transfer-tax setting, mint authority, freeze authority or venue status is claimed until the official mint is published and verified.
 
 ## Operating revenue
 

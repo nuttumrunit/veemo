@@ -92,8 +92,8 @@ npm run check
 npm test
 ```
 
-The `$VEE` token CA and Treasury address are currently TBA. No market, authority, tax, balance or on-chain activation claim is shown until the official addresses are published and verified. Public Agent activation remains locked.
+The `$VMO` token CA and Treasury address are currently TBA. No market, authority, tax, balance or on-chain activation claim is shown until the official addresses are published and verified. Public Agent activation remains locked.
 
 ## Token loop
 
-The intended network policy uses operating revenue to route 80% to compute and 20% to the verified-Agent epoch pool. The `$VEE` CA, Treasury address and activation contract remain TBA, so public activation is locked. See [TOKENOMICS.md](./TOKENOMICS.md).
+The intended network policy uses operating revenue to route 80% to compute and 20% to the verified-Agent epoch pool. The `$VMO` CA, Treasury address and activation contract remain TBA, so public activation is locked. See [TOKENOMICS.md](./TOKENOMICS.md).
